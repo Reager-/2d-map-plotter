@@ -1,0 +1,323 @@
+<!doctype html>
+<head>
+    <title>Mourning Map</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+<h1>Mourning Map</h1>
+    <style type="text/css">
+      body, html {
+        margin: 0;
+      }
+      .legend {
+      	text-shadow: 1px 1px 1px black;
+      }
+      .axis text {
+        font-size: 40px;
+      }
+      .axisUL text {
+        font-size: 0px;
+      }
+      .axis line{
+        fill: none;
+        stroke: black;
+      }
+      .axisUL line{
+        fill: none;
+        stroke: black;
+      }
+      .tick line{
+        opacity: 1;
+      }
+</style>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script charset="utf-8">
+
+    var w = 2292;
+    var h = 3450;
+    var fontSize = 40;
+    var displayAll = true;
+
+    // Legend text
+    var legendText = [
+    { "id" : "min" , "color" : "brown", "y_offset" : 0},							//0
+    { "id" : "max" , "color" : "brown", "y_offset" : 0},							//1
+    { "id" : "grave elf" , "color" : "green", "y_offset" : 0},						//2
+    { "id" : "grave topi" , "color" : "green", "y_offset" : 50},					//3
+    { "id" : "grave stoneborn" , "color" : "green", "y_offset" : 100},				//4
+    { "id" : "grave monster" , "color" : "green", "y_offset" : 150},				//5
+    { "id" : "grave human" , "color" : "green", "y_offset" : 200},					//6
+    { "id" : "copper" , "color" : "orange", "y_offset" : 250},						//7
+    { "id" : "tin" , "color" : "gray", "y_offset" : 300},							//8
+    { "id" : "iron" , "color" : "black", "y_offset" : 350},							//9
+    { "id" : "silver" , "color" : "white", "y_offset" : 400},						//10
+    { "id" : "gold" , "color" : "yellow", "y_offset" : 450},						//11
+    { "id" : "temple" , "color" : "red", "y_offset" : 500},							//12
+    { "id" : "camp" , "color" : "blue", "y_offset" : 550},							//13
+    { "id" : "houselot" , "color" : "green", "y_offset" : 600},						//14
+    { "id" : "crystal" , "color" : "pink", "y_offset" : 650},						//15
+    { "id" : "lake" , "color" : "cyan", "y_offset" : 700},							//16
+    { "id" : "corner" , "color" : "black", "y_offset" : 750},						//17
+    { "id" : "SHOW ALL/NONE" , "color" : "black", "y_offset" : -50}					//18
+    ];
+
+    //Interest points
+    var jsonCircles = [
+    { "legendTextMapping" : legendText[0], "x_axis": 0, "y_axis": 0, "radius": 0 },
+	{ "legendTextMapping" : legendText[1], "x_axis": w, "y_axis": h, "radius": 0 },
+
+	{ "legendTextMapping" : legendText[2], "x_axis": 1878, "y_axis": 2909, "radius": 20 },
+	{ "legendTextMapping" : legendText[3], "x_axis": 1888, "y_axis": 2154, "radius": 20 },
+	{ "legendTextMapping" : legendText[3], "x_axis": -74, "y_axis": 2473, "radius": 20 },
+	{ "legendTextMapping" : legendText[4], "x_axis": 1481, "y_axis": 3143, "radius": 20 },
+	{ "legendTextMapping" : legendText[4], "x_axis": -100, "y_axis": 1195, "radius": 20 },
+	{ "legendTextMapping" : legendText[5], "x_axis": 667, "y_axis": 2901, "radius": 20 },
+	{ "legendTextMapping" : legendText[5], "x_axis": 1113, "y_axis": 1316, "radius": 20 },
+	{ "legendTextMapping" : legendText[6], "x_axis": 1231, "y_axis": 1859, "radius": 20 },
+	{ "legendTextMapping" : legendText[6],"x_axis": 860, "y_axis": 2101, "radius": 20 },
+
+	{ "legendTextMapping" : legendText[7], "x_axis": 478, "y_axis": 1468, "radius": 20 },
+	{ "legendTextMapping" : legendText[7], "x_axis": 1014, "y_axis": 1609, "radius": 20 },
+	{ "legendTextMapping" : legendText[7], "x_axis": 1343, "y_axis": 2014, "radius": 20 },
+	{ "legendTextMapping" : legendText[7], "x_axis": 997, "y_axis": 2123, "radius": 20 },
+
+	{ "legendTextMapping" : legendText[8], "x_axis": 1680, "y_axis": 2130, "radius": 20 },
+	{ "legendTextMapping" : legendText[8], "x_axis": 1500, "y_axis": 2540, "radius": 20 },
+	{ "legendTextMapping" : legendText[8], "x_axis": 1554, "y_axis": 1006, "radius": 20 },
+	{ "legendTextMapping" : legendText[8], "x_axis": 700, "y_axis": 1000, "radius": 20 },
+	{ "legendTextMapping" : legendText[8], "x_axis": 24, "y_axis": 2225, "radius": 20 },
+	{ "legendTextMapping" : legendText[8], "x_axis": 1313, "y_axis": 3149, "radius": 20 },
+	{ "legendTextMapping" : legendText[8], "x_axis": 692, "y_axis": 1003, "radius": 20 },
+	
+	{ "legendTextMapping" : legendText[9], "x_axis": 288, "y_axis": 955, "radius": 20 },
+	{ "legendTextMapping" : legendText[9], "x_axis": -23, "y_axis": 2327, "radius": 20 },
+	{ "legendTextMapping" : legendText[9], "x_axis": 1702, "y_axis": 2379, "radius": 20 },
+
+	{ "legendTextMapping" : legendText[10], "x_axis": 2087, "y_axis": 1842, "radius": 20 },
+	{ "legendTextMapping" : legendText[10], "x_axis": 1211, "y_axis": 1169, "radius": 20 },
+	{ "legendTextMapping" : legendText[10], "x_axis": 291, "y_axis": 2833, "radius": 20 },
+	{ "legendTextMapping" : legendText[10], "x_axis": 837, "y_axis": 2838, "radius": 20 },
+
+	{ "legendTextMapping" : legendText[11], "x_axis": 2125, "y_axis": 1502, "radius": 20 },
+	{ "legendTextMapping" : legendText[11], "x_axis": 1836, "y_axis": 1211, "radius": 20 },
+	{ "legendTextMapping" : legendText[11], "x_axis": 1350, "y_axis": 815, "radius": 20 },
+	{ "legendTextMapping" : legendText[11], "x_axis": 700, "y_axis": 723, "radius": 20 },
+	{ "legendTextMapping" : legendText[11], "x_axis": 44, "y_axis": 950, "radius": 20 },
+	{ "legendTextMapping" : legendText[11], "x_axis": -76, "y_axis": 1705, "radius": 20 },
+	{ "legendTextMapping" : legendText[11], "x_axis": -25, "y_axis": 3018, "radius": 20 },
+	{ "legendTextMapping" : legendText[11], "x_axis": 556, "y_axis": 2745, "radius": 20 },
+	{ "legendTextMapping" : legendText[11], "x_axis": 594, "y_axis": 2891, "radius": 20 },
+	{ "legendTextMapping" : legendText[11], "x_axis": 697, "y_axis": 3024, "radius": 20 },
+
+    { "legendTextMapping" : legendText[12], "x_axis": 1538, "y_axis": 3314, "radius": 25 },
+    { "legendTextMapping" : legendText[12], "x_axis": 2060, "y_axis": 2060, "radius": 25 },
+    { "legendTextMapping" : legendText[12], "x_axis": 1041, "y_axis": 542, "radius": 25 },
+    { "legendTextMapping" : legendText[12], "x_axis": 252, "y_axis": 3096, "radius": 25 },	
+	
+	{ "legendTextMapping" : legendText[13], "x_axis": 1513, "y_axis": 2382, "radius": 30 },
+	{ "legendTextMapping" : legendText[13], "x_axis": 950, "y_axis": 700, "radius": 30 },
+	{ "legendTextMapping" : legendText[13], "x_axis": 871, "y_axis": 937, "radius": 30 },
+	{ "legendTextMapping" : legendText[13], "x_axis": 951, "y_axis": 986, "radius": 30 },
+	{ "legendTextMapping" : legendText[13], "x_axis": 68, "y_axis": 1859, "radius": 30 },
+	{ "legendTextMapping" : legendText[13], "x_axis": 295, "y_axis": 2239, "radius": 30 },
+	{ "legendTextMapping" : legendText[13], "x_axis": 1176, "y_axis": 1373, "radius": 30 },
+	{ "legendTextMapping" : legendText[13], "x_axis": 1367, "y_axis": 2079, "radius": 30 },
+	{ "legendTextMapping" : legendText[13], "x_axis": 1854, "y_axis": 2231, "radius": 30 },
+		
+	{ "legendTextMapping" : legendText[14], "x_axis": 1280, "y_axis": 2775, "radius": 25 },
+		
+	{ "legendTextMapping" : legendText[15], "x_axis": 1693, "y_axis": 1199, "radius": 20 },
+	{ "legendTextMapping" : legendText[15], "x_axis": -117, "y_axis": 956, "radius": 20 },
+	{ "legendTextMapping" : legendText[15], "x_axis": 57, "y_axis": 2974, "radius": 20 },
+	{ "legendTextMapping" : legendText[15], "x_axis": 677, "y_axis": 3132, "radius": 20 },
+
+	{ "legendTextMapping" : legendText[16], "x_axis": 578, "y_axis": 1658, "radius": 30 },
+	{ "legendTextMapping" : legendText[16], "x_axis": 1082, "y_axis": 1645, "radius": 30 },
+	{ "legendTextMapping" : legendText[16], "x_axis": 1224, "y_axis": 2174, "radius": 30 },
+	
+	{ "legendTextMapping" : legendText[17], "x_axis": 2170, "y_axis": 1413, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 1914, "y_axis": 1413, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 1914, "y_axis": 1157, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 1658, "y_axis": 901, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 1402, "y_axis": 645, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 133, "y_axis": 645, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": -122, "y_axis": 3194, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": -122, "y_axis": 901, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 378, "y_axis": 3194, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 645, "y_axis": 2940, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 645, "y_axis": 3194, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 1413, "y_axis": 3194, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 1413, "y_axis": 3450, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 1658, "y_axis": 2937, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 1914, "y_axis": 2938, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 1914, "y_axis": 2682, "radius": 20 },
+	{ "legendTextMapping" : legendText[17], "x_axis": 2170, "y_axis": 2682, "radius": 20 }
+		
+  ];
+
+    var svgContainer = d3.select("body").append("svg").attr("width", w).attr("height", h).style("border", "1px solid black")
+    .call(d3.behavior.zoom().on("zoom", function () {
+        svgContainer.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+      }))
+      .append("g");
+
+    //Create scale functions
+    var xScale = d3.scale.linear()
+                 .domain([0, d3.max(jsonCircles, function(d) { return d.x_axis; })])
+                 .range([0, w]);
+
+    var xNegativeScale = d3.scale.linear()
+                 .domain([d3.max(jsonCircles, function(d) { return d.x_axis; })*-1, 0])
+                 .range([-w, 0]);
+
+    var yScale = d3.scale.linear()
+                 .domain([0, d3.max(jsonCircles, function(d) { return d.y_axis; })])
+                 .range([h, 0]);
+
+    //Define X axis
+    var xAxis = d3.svg.axis()
+		            .scale(xScale)
+		            .orient("bottom")
+		            .innerTickSize(-h)
+		            .outerTickSize(0)
+		            .tickPadding(10)
+		            .ticks(5);
+
+    //Define -X axis
+    var xNegativeAxis = d3.svg.axis()
+			            .scale(xNegativeScale)
+			            .orient("bottom")
+			            .innerTickSize(-h)
+			            .outerTickSize(0)
+			            .tickPadding(10)
+			            .ticks(5);
+
+    //Define Y axis
+    var yAxis = d3.svg.axis()
+		            .scale(yScale)
+		            .orient("left")
+		            .innerTickSize(-w)
+		            .outerTickSize(0)
+		            .tickPadding(10)
+		            .ticks(5);
+
+	//Define Y axis for upper left quadrant
+    var yAxisUL = d3.svg.axis()
+		            .scale(yScale)
+		            .orient("right")
+		            .innerTickSize(-w)
+		            .outerTickSize(0)
+		            .tickPadding(10)
+		            .ticks(5);
+
+    var borderPath = svgContainer.append("rect")
+                .attr("x", -w)
+                .attr("y", 0)
+                .attr("height", h)
+                .attr("width", w*2)
+                .style("stroke", "black")
+                .style("fill", "none")
+                .style("stroke-width", 2);
+
+    var map = svgContainer.append('svg')
+        .attr("x", 0)
+    	.attr("y", 0)
+        .attr('width', w)
+        .attr('height', h);
+
+    map.append('image')
+    .attr('xlink:href', 'map.jpg')
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr('width', w)
+    .attr('height', h);
+
+    var elem = svgContainer.selectAll("g")
+        .data(jsonCircles)
+
+     var elemLegendText = svgContainer.selectAll("g")
+        .data(legendText)
+
+    svgContainer.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + h + ")")
+      .call(xAxis);
+
+    svgContainer.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + h + ")")
+      .call(xNegativeAxis);
+
+    svgContainer.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(0,0)")
+      .call(yAxis);
+
+    //Duplicated yAxis for upper left quadrant
+    svgContainer.append("g")
+      .attr("class", "y axisUL")
+      .attr("transform", "translate(0,0)")
+      .call(yAxisUL);
+
+    //Circle group
+    var elemEnter = elem.enter()
+        .append("g")
+        .style("display", "block")
+
+    var circleAttributes = elemEnter.append("circle")
+    .attr("cx", function (d) { return xScale(d.x_axis); })
+    .attr("cy", function (d) { return yScale(d.y_axis); })
+    .attr("r", function (d) { return d.radius; })
+    .attr("stroke", function (d) { return "black"; })
+    .attr("stroke-width", function (d) { return "1"; })
+    .style("fill", function(d) { 
+    	return d.legendTextMapping.color; })
+    .attr("id", "pOI");
+
+    elemEnter.append("text")
+        .attr("dx", function(d){return xScale(d.x_axis - d.radius*2.5)})
+        .attr("dy", function(d){return yScale(d.y_axis - d.radius*2)})
+        .attr("font-size", function(d){return fontSize})
+        .text(function(d){if(d.legendTextMapping.id!=="min" && d.legendTextMapping.id!=="max") return "(" + d.x_axis + "," + d.y_axis + ")"})
+
+    elemEnter.append("text")
+        .attr("dx", function(d){return xScale(d.x_axis - d.radius*1)})
+        .attr("dy", function(d){return yScale(d.y_axis + d.radius*1.5)})
+        .attr("font-size", function(d){return fontSize})
+        .text(function(d){if(d.legendTextMapping.id!=="min" && d.legendTextMapping.id!=="max") return d.legendTextMapping.id})
+
+	// Legend Text group
+	var elemEnterLegendText = elemLegendText.enter()
+        .append("g")
+
+	elemEnterLegendText.append("text")
+		.attr("x", w+10)             
+		.attr("y", function (d) { return d.y_offset; })
+		.attr("font-size", function(d){return fontSize})    
+		.attr("class", "legend")
+		.style("fill", function (d) { return d.color; })         
+		.on("click", function(d){
+			if (d.id==="SHOW ALL/NONE") {
+				newDisplay = (displayAll) ? "none" : "block";
+				elemEnter[0].forEach(function(e){
+					d3.select(e).style("display", newDisplay);
+				})
+				displayAll = (newDisplay==="none") ? false : true;
+			}
+			else if(d.id!=="min" && d.id!=="max") {
+				elemEnter[0].forEach(function(e){
+					newDisplay = (e["__data__"].legendTextMapping.id===d.id && e.style.display==="block") ? "none" : "block";
+					// Hide or show the elements
+					if (e["__data__"].legendTextMapping.id===d.id){
+						d3.select(e).style("display", newDisplay);
+					}
+				})
+			}
+		})
+		.text( function (d) { if(d.id!=="min" && d.id!=="max") return d.id; });
+
+</script>
+<h2>Goodfellas&trade;</h2>
+</body>
